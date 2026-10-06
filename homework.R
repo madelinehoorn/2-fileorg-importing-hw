@@ -3,6 +3,8 @@
 
 #List names of students collaborating with (no more than 2): 
 
+# Krista & Aylin 
+
 #GENERAL INFO 
 #data_A contains 12 files of data. 
 #Each file (6192_3.txt) notes the participant (6192) and block number (3)
@@ -19,6 +21,7 @@
 
 # ANSWER
 
+library(readr)
 
 ### QUESTION 2 ----- 
 
@@ -37,6 +40,16 @@ col_names  <-  c("trial_num","speed_actual","speed_response","correct")
 
 # ANSWER
 
+library(here)
+getwd()
+here()
+here("data_A","6191_1.txt")
+file.exists(here("259-langbasics-importing-hw.Rproj"))
+
+library(tidyverse)
+ds1 <- read_delim('data_A/6191_1.txt', skip = 7, col_names = c("trial_num","speed_actual","speed_response","correct"))
+ds1
+
 ### QUESTION 3a. ----- 
 
 # For some reason, the trial numbers for this experiment should start at 100
@@ -44,6 +57,8 @@ col_names  <-  c("trial_num","speed_actual","speed_response","correct")
 
 # ANSWER
 
+ds1$trial_num_new <- ds1$trial_num + 100
+ds1
 
 ### QUESTION 3b. ----- 
 # Write the new data from question 3a to a CSV file in the "data_A_cleaned" folder
@@ -53,6 +68,11 @@ col_names  <-  c("trial_num","speed_actual","speed_response","correct")
 
 # ANSWER
 
+if (!dir.exists("data_A_cleaned")) dir.create("data_A_cleaned")
+
+write_csv(ds1, "data_A_cleaned/6191_1.csv")
+
+# I chose snake_case as a naming convention because I plan to use it for other projects and because it is optimal for use with R. I did not choose an additional prefix for ordering because the file name is already the participant's number followed by the block number.
 
 ### QUESTION 4 ----- 
 
@@ -61,6 +81,8 @@ col_names  <-  c("trial_num","speed_actual","speed_response","correct")
 
 # ANSWER
 
+data_A_files <- list.files("data_A", full.names = TRUE)
+data_A_files
 
 ### QUESTION 5 ----- 
 
@@ -68,6 +90,8 @@ col_names  <-  c("trial_num","speed_actual","speed_response","correct")
 
 # ANSWER
 
+ds <- read_delim(data_A_files, skip = 7, col_names = c("trial_num","speed_actual","speed_response","correct"))
+ds
 
 ### QUESTION 6 -----
 
@@ -81,6 +105,11 @@ col_names  <-  c("trial_num","speed_actual","speed_response","correct")
 
 # ANSWER
 
+ds$trial_num_new <- ds$trial_num + 100
+
+ds <- read_delim(data_A_files, skip = 7, col_names = c("trial_num","speed_actual","speed_response","correct"), col_types = "iccl")
+ds$trial_num_new <- ds$trial_num + 100
+ds
 
 ### QUESTION 7 -----
 
@@ -91,6 +120,18 @@ col_names  <-  c("trial_num","speed_actual","speed_response","correct")
 
 # ANSWER
 
+view(ds)
+?read_tsv
+
+ds <- read_delim(data_A_files, skip = 7, col_names = c("trial_num","speed_actual","speed_response","correct"), col_types = "iccl", id = "pid")
+ds
+
+library(dplyr)
+ds <- ds %>% mutate(pid = str_remove(pid, ".txt")) %>% mutate(pid = str_remove(pid, "data_A/"))
+ds
+
+ds$trial_num_new <- ds$trial_num + 100
+ds
 
 ### QUESTION 8 -----
 
@@ -99,4 +140,13 @@ col_names  <-  c("trial_num","speed_actual","speed_response","correct")
 # There are two sheets of data -- import each one into a new tibble
 
 # ANSWER
+
+install.packages("readxl")
+library(readxl)
+?read_xlsx
+
+participant_info_1 <- read_xlsx("data_B/participant_info.xlsx", sheet = 1)
+participant_info_1
+participant_info_2 <- read_xlsx("data_B/participant_info.xlsx", sheet = 2)
+participant_info_2
 
